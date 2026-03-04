@@ -1,29 +1,18 @@
 class Solution {
     public String convert(String s, int numRows) {
-        List<List<Character>> mat = new ArrayList<>();
-        for(int r = 0;r<numRows;r++)
-        {
-            mat.add(new ArrayList<>());
+        if (numRows == 1) {
+            return s;
         }
-        int n = s.length();
-        int i = 0;
-        while(i<n)
-        {
-            for(int down = 0;down<numRows && i<n;down++)
-            {
-                mat.get(down).add(s.charAt(i++));
+        StringBuilder[] g = new StringBuilder[numRows];
+        Arrays.setAll(g, k -> new StringBuilder());
+        int i = 0, k = -1;
+        for (char c : s.toCharArray()) {
+            g[i].append(c);
+            if (i == 0 || i == numRows - 1) {
+                k = -k;
             }
-            for(int up = numRows-2;up>0  && i<n;up--)
-            {
-                mat.get(up).add(s.charAt(i++));
-            }
+            i += k;
         }
-        String ans = "";
-        for(i=0;i<numRows;i++)
-        {
-            for(int j=0;j<mat.get(i).size();j++)
-            ans += mat.get(i).get(j);
-        }
-        return ans;
+        return String.join("", g);
     }
 }

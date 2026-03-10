@@ -13,29 +13,29 @@
  *     }
  * }
  */
+// Java implementation
 class Solution {
+    int index = 0; // tracks position in preorder
+
     public TreeNode buildTree(int[] preorder, int[] inorder) {
-        if (preorder.length == 0 || inorder.length == 0) {
-            return null;
-        }
-
-        TreeNode root = new TreeNode(preorder[0]);
-        int mid = -1;
+        HashMap<Integer, Integer> map = new HashMap<>();
         for (int i = 0; i < inorder.length; i++) {
-            if (inorder[i] == preorder[0]) {
-                mid = i;
-                break;
-            }
+            map.put(inorder[i], i); // map inorder value to its index
         }
+        return helper(preorder, 0, inorder.length - 1, map);
+    }
 
-        int[] leftPreorder = Arrays.copyOfRange(preorder, 1, mid + 1);
-        int[] leftInorder = Arrays.copyOfRange(inorder, 0, mid);
-        root.left = buildTree(leftPreorder, leftInorder);
+    private TreeNode helper(int[] preorder, int start, int end, HashMap<Integer, Integer> map) {
+        if (start > end) return null;
 
-        int[] rightPreorder = Arrays.copyOfRange(preorder, mid + 1, preorder.length);
-        int[] rightInorder = Arrays.copyOfRange(inorder, mid + 1, inorder.length);
-        root.right = buildTree(rightPreorder, rightInorder);
+        int rootVal = preorder[index++];
+        TreeNode node = new TreeNode(rootVal);
 
-        return root;
+        int inorderIndex = map.get(rootVal);
+
+        node.left = helper(preorder, start, inorderIndex - 1, map);
+        node.right = helper(preorder, inorderIndex + 1, end, map);
+
+        return node;
     }
 }

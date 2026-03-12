@@ -4,51 +4,61 @@
  *     int val;
  *     TreeNode left;
  *     TreeNode right;
- *     TreeNode() {}
- *     TreeNode(int val) { this.val = val; }
- *     TreeNode(int val, TreeNode left, TreeNode right) {
- *         this.val = val;
- *         this.left = left;
- *         this.right = right;
- *     }
+ *     TreeNode(int x) { val = x; }
  * }
  */
-
 public class Codec {
 
     // Encodes a tree to a single string.
     public String serialize(TreeNode root) {
-        List<String> res = new ArrayList<>();
-        dfsSerialize(root, res);
-        return String.join(",", res);
-    }
+        if (root == null) return "null";
 
-    private void dfsSerialize(TreeNode node, List<String> res) {
-        if (node == null) {
-            res.add("N");
-            return;
+        StringBuilder sb = new StringBuilder();
+        Queue<TreeNode> q = new LinkedList<>();
+        q.add(root);
+
+        while (!q.isEmpty()) {
+            TreeNode curr = q.poll();
+
+            if (curr == null) {
+                sb.append("null,");
+                continue;
+            }
+
+            sb.append(curr.val).append(",");
+            q.add(curr.left);
+            q.add(curr.right);
         }
-        res.add(String.valueOf(node.val));
-        dfsSerialize(node.left, res);
-        dfsSerialize(node.right, res);
+
+        return sb.toString();
     }
 
     // Decodes your encoded data to tree.
     public TreeNode deserialize(String data) {
-        String[] vals = data.split(",");
-        int[] i = {0};
-        return dfsDeserialize(vals, i);
-    }
+        if (data.equals("null")) return null;
 
-    private TreeNode dfsDeserialize(String[] vals, int[] i) {
-        if (vals[i[0]].equals("N")) {
-            i[0]++;
-            return null;
+        String[] arr = data.split(",");
+        TreeNode root = new TreeNode(Integer.parseInt(arr[0]));
+        Queue<TreeNode> q = new LinkedList<>();
+        q.add(root);
+        int i = 1;
+
+        while (!q.isEmpty() && i < arr.length) {
+            TreeNode curr = q.poll();
+
+            if (!arr[i].equals("null")) {
+                curr.left = new TreeNode(Integer.parseInt(arr[i]));
+                q.add(curr.left);
+            }
+            i++;
+
+            if (i < arr.length && !arr[i].equals("null")) {
+                curr.right = new TreeNode(Integer.parseInt(arr[i]));
+                q.add(curr.right);
+            }
+            i++;
         }
-        TreeNode node = new TreeNode(Integer.parseInt(vals[i[0]]));
-        i[0]++;
-        node.left = dfsDeserialize(vals, i);
-        node.right = dfsDeserialize(vals, i);
-        return node;
+
+        return root;
     }
 }

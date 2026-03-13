@@ -18,7 +18,7 @@ class Solution {
 
     public boolean searchword(int i, int j, int index, String word, char[][] board ){
         if(index==word.length()) return true;
-        if(i<0 || i>=board.length|| j<0 || j>=board[0].length || word.charAt(index)!=board[i][j] || visited[i][j]){
+        if(i<0 || i>=board.length|| j<0 || j>=board[i].length || word.charAt(index)!=board[i][j] || visited[i][j]){
             return false;
         }
 

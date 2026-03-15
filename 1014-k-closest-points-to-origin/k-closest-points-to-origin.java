@@ -1,22 +1,40 @@
 public class Solution {
     public int[][] kClosest(int[][] points, int k) {
-        PriorityQueue<int[]> maxHeap = new PriorityQueue<>(
-            (a, b) -> Integer.compare(b[0] * b[0] + b[1] * b[1],
-                                      a[0] * a[0] + a[1] * a[1])
-        );
+        int L = 0, R = points.length - 1;
+        int pivot = points.length;
 
-        for (int[] point : points) {
-            maxHeap.offer(point);
-            if (maxHeap.size() > k) {
-                maxHeap.poll();
+        while (pivot != k) {
+            pivot = partition(points, L, R);
+            if (pivot < k) {
+                L = pivot + 1;
+            } else {
+                R = pivot - 1;
             }
         }
-
         int[][] res = new int[k][2];
-        int i = 0;
-        while (!maxHeap.isEmpty()) {
-            res[i++] = maxHeap.poll();
-        }
+        System.arraycopy(points, 0, res, 0, k);
         return res;
+    }
+
+    private int partition(int[][] points, int l, int r) {
+        int pivotIdx = r;
+        int pivotDist = euclidean(points[pivotIdx]);
+        int i = l;
+        for (int j = l; j < r; j++) {
+            if (euclidean(points[j]) <= pivotDist) {
+                int[] temp = points[i];
+                points[i] = points[j];
+                points[j] = temp;
+                i++;
+            }
+        }
+        int[] temp = points[i];
+        points[i] = points[r];
+        points[r] = temp;
+        return i;
+    }
+
+    private int euclidean(int[] point) {
+        return point[0] * point[0] + point[1] * point[1];
     }
 }

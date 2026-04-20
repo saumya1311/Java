@@ -1,22 +1,25 @@
 class Solution {
     public List<List<Integer>> combinationSum(int[] candidates, int target) {
-        // dp[t] = list of combinations that sum to t
-        List<List<List<Integer>>> dp = new ArrayList<>();
-        for (int i = 0; i <= target; i++) dp.add(new ArrayList<>());
-
-        dp.get(0).add(new ArrayList<>()); // base: one way to make 0
-
-        // For each candidate, extend smaller sums
-        for (int c : candidates) {
-            for (int t = c; t <= target; t++) {
-                // For each combination that makes (t - c), append c
-                for (List<Integer> comb : dp.get(t - c)) {
-                    List<Integer> newComb = new ArrayList<>(comb);
-                    newComb.add(c);
-                    dp.get(t).add(newComb);
-                }
-            }
+        List<List<Integer>> result = new ArrayList<>();
+        backtrack(candidates, target, 0, new ArrayList<>(), result, 0);
+        return result;
+    }
+    
+    private void backtrack(int[] candidates, int target, int start, 
+                          List<Integer> current, List<List<Integer>> result, int sum) {
+        if (sum == target) {
+            result.add(new ArrayList<>(current));
+            return;
         }
-        return dp.get(target);
+        
+        if (sum > target) {
+            return;
+        }
+
+        for (int i = start; i < candidates.length; i++) {
+            current.add(candidates[i]);
+            backtrack(candidates, target, i, current, result, sum + candidates[i]);
+            current.remove(current.size() - 1);
+        }
     }
 }

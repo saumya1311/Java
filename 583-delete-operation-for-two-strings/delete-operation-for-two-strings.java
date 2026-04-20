@@ -14,8 +14,8 @@ class Solution {
                 }
             }
         }
-
-        return ((n-t[n][m])+(m-t[n][m]));
+        int lcs=t[n][m];
+        return (n+m-2*lcs);
     }
 
 }

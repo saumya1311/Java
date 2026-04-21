@@ -1,38 +1,30 @@
 class Solution {
-    int[][] dp;
-
     public int maxCoins(int[] nums) {
         int n = nums.length;
-        
+
         int[] arr = new int[n + 2];
         arr[0] = arr[n + 1] = 1;
-        
+
         for (int i = 0; i < n; i++) {
             arr[i + 1] = nums[i];
         }
 
-        dp = new int[n + 2][n + 2];
-        return solve(arr, 1, n);
-    }
+        int[][] dp = new int[n + 2][n + 2];
 
-    private int solve(int[] arr, int i, int j) {
-        if (i > j) return 0;
+        for (int len = 1; len <= n; len++) {
+            for (int i = 1; i <= n - len + 1; i++) {
+                int j = i + len - 1;
 
-        if (dp[i][j] != 0) return dp[i][j];
+                for (int k = i; k <= j; k++) {
+                    int coins = arr[i - 1] * arr[k] * arr[j + 1];
 
-        int max = 0;
-
-        for (int k = i; k <= j; k++) {
-            int left = solve(arr, i, k - 1);
-            int right = solve(arr, k + 1, j);
-
-            int coins = arr[i - 1] * arr[k] * arr[j + 1];
-
-            int total = left + right + coins;
-
-            max = Math.max(max, total);
+                    dp[i][j] = Math.max(dp[i][j],
+                        dp[i][k - 1] + dp[k + 1][j] + coins
+                    );
+                }
+            }
         }
 
-        return dp[i][j] = max;
+        return dp[1][n];
     }
 }
